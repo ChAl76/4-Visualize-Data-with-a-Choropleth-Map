@@ -35,5 +35,28 @@ const colorScale = d3
 Promise.all([d3.json(COUNTY_URL), d3.json(EDUCATION_URL)]).then(
   ([us, educationData]) => {
     const educationMap = new Map(educationData.map((d) => [d.fips, d]));
+
+    // Add Title and Description
+    svg
+      .append('text')
+      .attr('id', 'title')
+      .attr('x', width / 2)
+      .attr('y', 30)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '2rem')
+      .style('fill', '#343434')
+      .text('United States Educational Attainment');
+
+    svg
+      .append('text')
+      .attr('id', 'description')
+      .attr('x', width / 2)
+      .attr('y', 55)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '1rem')
+      .style('fill', '#252525')
+      .text(
+        "Percentage of adults age 25 and older with a bachelor's degree or higher (2010-2014)"
+      );
   }
 );
