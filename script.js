@@ -30,3 +30,10 @@ const colorScale = d3
   .scaleThreshold()
   .domain([10, 20, 30, 40, 50, 60])
   .range(['#f0f9e8', '#bae4bc', '#7bccc4', '#43a2ca', '#0868ac', '#023457']);
+
+// Load Data
+Promise.all([d3.json(COUNTY_URL), d3.json(EDUCATION_URL)]).then(
+  ([us, educationData]) => {
+    const educationMap = new Map(educationData.map((d) => [d.fips, d]));
+  }
+);
