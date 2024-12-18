@@ -93,5 +93,45 @@ Promise.all([d3.json(COUNTY_URL), d3.json(EDUCATION_URL)]).then(
       .on('mouseout', () => {
         tooltip.transition().duration(500).style('opacity', 0);
       });
+
+    // Add legend
+    const legend = svg.append('g').attr('id', 'legend');
+
+    const legendWidth = 250;
+    const legendHeight = 17;
+    const legendX = width / 2 - legendWidth / 2;
+
+    const legendScale = d3
+      .scaleLinear()
+      .domain([0, 60])
+      .range([0, legendWidth]);
+
+    const legendAxis = d3
+      .axisBottom(legendScale)
+      .tickValues(colorScale.domain())
+      .tickFormat((d) => d + '%');
+
+    legendGroup = legend
+      .append('g')
+      .attr(
+        'transform',
+        `translate(${width - legendWidth - 210},${height + 35})`
+      );
+
+    legendGroup
+      .selectAll('rect')
+      .data(colorScale.range())
+      .enter()
+      .append('rect')
+      .attr('x', (_, i) => (i * legendWidth) / colorScale.range().length)
+      .attr('y', 0)
+      .attr('width', legendWidth / colorScale.range().length)
+      .attr('height', legendHeight)
+      .attr('fill', (d) => d);
+
+    legendGroup
+      .append('g')
+      .attr('transform', `translate(0, ${legendHeight})`)
+      .call(legendAxis);
   }
 );
