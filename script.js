@@ -58,5 +58,40 @@ Promise.all([d3.json(COUNTY_URL), d3.json(EDUCATION_URL)]).then(
       .text(
         "Percentage of adults age 25 and older with a bachelor's degree or higher (2010-2014)"
       );
+
+    // Draw counties
+    const counties = topojson.feature(us, us.objects.counties).features;
+
+    svg
+      .append('g')
+      .attr('transform', `translate(0, 50)`)
+      .selectAll('path')
+      .data(counties)
+      .enter()
+      .append('path')
+      .attr('class', 'county')
+      .attr('data-fips', (d) => d.id)
+      .attr('data-education', (d) => educationMap.get(d.id)?.bachelorsOrHigher)
+      .attr('fill', (d) => {
+        const education = educationMap.get(d.id)?.bachelorsOrHigher;
+        return education ? colorScale(education) : '#ccc';
+      })
+      .attr('d', d3.geoPath())
+      .on('mouseover', (event, d) => {
+        const education = educationMap.get(d.id);
+        tooltip.transition().duration(200).style('opacity', 0.9);
+        tooltip
+          .style('opacity', 0.9)
+          .style('left', event.pageX + 10 + 'px')
+          .style('top', event.pageY - 30 + 'px')
+          .attr('data-education', education?.bachelorsOrHigher)
+          .html(
+            `<strong>${education.area_name}, ${education.state}</strong><br>
+              ${education.bachelorsOrHigher}% have a bachelor's degree`
+          );
+      })
+      .on('mouseout', () => {
+        tooltip.transition().duration(500).style('opacity', 0);
+      });
   }
 );
